@@ -9,27 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 
-class AdaptadorCustomGrid(var contexto:Context,items:ArrayList<Contacto>):BaseAdapter() {
-    //Almacenar los elementos que se van a mostrar en el listview
-    var items:ArrayList<Contacto>? = null
-    var copiaItems:ArrayList<Contacto>? = null
-
-    init {
-        this.items= ArrayList(items)
-        this.copiaItems=items
-    }
-
-    override fun getCount(): Int {
-        return this.items?.count()!!
-    }
-
-    override fun getItem(p0: Int): Any {
-        return this.items?.get(p0)!!
-    }
-
-    override fun getItemId(p0: Int): Long {
-        return p0.toLong()
-    }
+/**
+ * Adaptador encargado de manejar la grilla de contactos
+ *
+ * Fijate que ahora, como extiendo del AdaptadorCustom, y como este se encarga de
+ * agregar, actualizar y buscar los items del array, este adapter solamente se va a concentrar
+ * en inflar lo vista. Código más límpio y modularizado
+ */
+class AdaptadorCustomGrid(var contexto:Context): AdaptadorCustom() {
 
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var viewHolder:ViewHolder? = null
@@ -47,52 +34,8 @@ class AdaptadorCustomGrid(var contexto:Context,items:ArrayList<Contacto>):BaseAd
         //Asignacion de valores a elementos graficos
         viewHolder?.nombre?.text = item.nombre + " " + item.apellidos
         viewHolder?.foto?.setImageResource(item.foto)
-
         return vista!!
     }
-
-    fun addItem(item:Contacto){
-        copiaItems?.add(item)
-        items=ArrayList(copiaItems)
-        notifyDataSetChanged()
-    }
-
-    fun removeItem(index:Int){
-        copiaItems?.removeAt(index)
-        items=ArrayList(copiaItems)
-        notifyDataSetChanged()
-    }
-
-    fun updateItem(index:Int, newItem:Contacto){
-        copiaItems?.set(index,newItem)
-        items=ArrayList(copiaItems)
-        notifyDataSetChanged()
-    }
-
-    fun filtrar(str:String){
-        items?.clear()
-
-        if(str.isEmpty()){
-            items=ArrayList(copiaItems)
-            notifyDataSetChanged()
-            return
-        }else{
-
-        }
-        var busqueda = str
-        busqueda=busqueda.lowercase()
-
-        for (item in copiaItems!!){
-            val nombre = item.nombre.lowercase()
-            if(nombre.contains(busqueda)){
-                items?.add(item)
-            }
-        }
-
-        notifyDataSetChanged()
-    }
-
-
 
     private class ViewHolder(vista:View){
         var nombre: TextView? = null

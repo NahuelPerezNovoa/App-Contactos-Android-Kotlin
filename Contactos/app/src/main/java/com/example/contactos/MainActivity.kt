@@ -11,7 +11,10 @@ import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
 
-class MainActivity : AppCompatActivity() {
+/**
+ * Fijate que ahora implemento la interfaz (AdaptadorCustom.OnDataSetChange) ↓
+ */
+class MainActivity : AppCompatActivity(), AdaptadorCustom.OnDataSetChange {
 
     var lista:ListView? = null
     var grid:GridView? = null
@@ -58,8 +61,14 @@ class MainActivity : AppCompatActivity() {
 
         lista = findViewById<ListView>(R.id.lista)
         grid = findViewById<GridView>(R.id.grid)
-        adaptador = AdaptadorCustomLista(this,contactos!!)
-        adaptadorGrid = AdaptadorCustomGrid(this, contactos!!)
+        adaptador = AdaptadorCustomLista(this)
+        adaptadorGrid = AdaptadorCustomGrid(this)
+
+        /**Asigno al MainActivity como "listener" de los cambios realizados en las listas
+         Esto se puede hacer porque esta clase implementa AdaptadorCustom.OnDataSetChange**/
+        adaptador?.setOnDataChangeListener(this)
+        adaptadorGrid?.setOnDataChangeListener(this)
+
         viewSwitcher = findViewById(R.id.viewSwitcher)
 
         lista?.adapter = adaptador
@@ -105,7 +114,6 @@ class MainActivity : AppCompatActivity() {
 
         switchview.setOnCheckedChangeListener { compoundButton, b ->
             viewSwitcher?.showNext()
-            Log.d("NEXTVIEW",viewSwitcher?.nextView.toString())
         }
         return super.onCreateOptionsMenu(menu)
     }
@@ -124,7 +132,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        adaptador?.notifyDataSetChanged()
+    }
 
+    /**
+     * Escucho los cambios en el array de Contactos
+     * y actualizo ambas listas para reflejar los cambios
+     */
+    override fun onDataChanged() {
+        adaptadorGrid?.notifyDataSetChanged()
         adaptador?.notifyDataSetChanged()
     }
 
